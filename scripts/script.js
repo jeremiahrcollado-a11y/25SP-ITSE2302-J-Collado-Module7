@@ -11,16 +11,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (yearSpan) yearSpan.textContent = new Date().getFullYear();
 
+  // -------------------------------------------------
+  // Custom currency formatter (NO toLocaleString used)
+  // -------------------------------------------------
   function formatCurrency(amount) {
-    return amount.toLocaleString("en-US", {
-      style: "currency",
-      currency: "USD",
-    });
+    let negative = amount < 0 ? "-" : "";
+    amount = Math.abs(amount);
+
+    let dollars = Math.floor(amount);
+    let cents = Math.round((amount - dollars) * 100);
+    if (cents < 10) cents = "0" + cents;
+
+    // Add thousands separators manually
+    let dollarsStr = String(dollars).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+    return `${negative}$${dollarsStr}.${cents}`;
   }
 
-  // -------------------------------------------
-  //  NO Number() — using unary + for conversion
-  // -------------------------------------------
+  // -------------------------------------------------
+  // Calculate totals (no Number() — uses unary +)
+  // -------------------------------------------------
   function calculateTotal(orderDetails) {
     let subtotal = 0;
 
@@ -56,7 +66,6 @@ document.addEventListener("DOMContentLoaded", () => {
       let email = document.getElementById("email").value.trim();
       let size = document.getElementById("size").value;
 
-      // unary + converts to number
       let quantity = +document.getElementById("quantity").value;
 
       let color = document.getElementById("shirtColor").value;
@@ -87,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       for (let i = 0; i < printStyleElements.length; i++) {
         if (printStyleElements[i].checked) {
-          printStylePrice = printStyleElements[i].value; // still a string
+          printStylePrice = printStyleElements[i].value;
         }
       }
 
@@ -120,15 +129,11 @@ document.addEventListener("DOMContentLoaded", () => {
       let totals = calculateTotal(orderDetails);
 
       let html = `
-        <p><strong>Customer:</strong> ${orderDetails.firstName} ${
-        orderDetails.lastName
-      }</p>
+        <p><strong>Customer:</strong> ${orderDetails.firstName} ${orderDetails.lastName}</p>
         <p><strong>Email:</strong> ${orderDetails.email}</p>
         <p><strong>Size:</strong> ${orderDetails.size}</p>
         <p><strong>Quantity:</strong> ${orderDetails.quantity}</p>
-        <p><strong>Print Style:</strong> ${formatCurrency(
-          +orderDetails.printStylePrice
-        )}</p>
+        <p><strong>Print Style:</strong> ${formatCurrency(+orderDetails.printStylePrice)}</p>
         <p><strong>Add-ons:</strong> ${
           addons.length
             ? addons.map((a) => formatCurrency(+a)).join(", ")
