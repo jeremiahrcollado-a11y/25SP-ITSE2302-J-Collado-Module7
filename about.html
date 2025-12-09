@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About - Outerwear Supply</title>
+    <link rel="stylesheet" href="./css/styles.css" />
+    <script src="./scripts/script.js" ></script>
+  </head>
+  <body>
+    <header>
+      <nav class="navbar">
+        <div class="logo">Outerwear</div>
+        <ul>
+          <li><a href="about.html">About</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <section class="about-hero">
+      <h1>Our Mission</h1>
+      <p>
+        Delivering durable, stylish, and functional T-shirts at fair prices.
+      </p>
+    </section>
+
+    <section class="about-content">
+      <h2>Who We Are</h2>
+      <p>
+        Outerwear Supply began as a small startup focused on creating practical,
+        high-quality t-shirts. Over time, we expanded our product line to meet
+        the growing needs of customers looking for reliable, comfortable apparel
+        that looks great and performs under pressure.
+      </p>
+
+      <h2>Our Values</h2>
+      <ul>
+        <li>
+          <strong>Quality:</strong> Every item is tested for durability and
+          long-term performance.
+        </li>
+        <li><strong>Innovation:</strong> We constantly refine our designs.</li>
+        <li>
+          <strong>Service:</strong> Customer satisfaction drives everything we
+          do.
+        </li>
+      </ul>
+
+      <h2>What We Offer</h2>
+      <p>
+        Whether you are a student, traveler, gamer, or professional, our catalog
+        provides solutions crafted for diverse lifestyles and comfortable wear.
+      </p>
+    </section>
+    <section class="hero">
+        <h1>Custom T-Shirt Order Form</h1>
+        <p>Select your options below to generate a personalized price summary.</p>
+      </section>
+  
+      <section
+        class="content"
+        style="
+          max-width: 900px;
+          margin: 40px auto;
+          background: white;
+          padding: 25px;
+          border-radius: 12px;
+          box-shadow: var(--card-shadow);
+        "
+      >
+        <h2 style="text-align: center; margin-bottom: 20px">
+          T-Shirt Customization
+        </h2>
+  
+        <!-- ★★★ REQUIRED FORM ★★★ -->
+        <form id="orderForm">
+          <!-- Two optimized images -->
+          <div
+            style="
+              display: flex;
+              justify-content: center;
+              gap: 20px;
+              margin-bottom: 20px;
+              flex-wrap: wrap;
+            "
+          >
+            <img
+              src="images/tshirt.jpg"
+              alt="T-Shirt Example"
+              width="250"
+              height="250"
+              style="border-radius: 12px"
+            />
+            <img
+              src="images/printer.jpg"
+              alt="Printing Machine"
+              width="250"
+              height="250"
+              style="border-radius: 12px"
+            />
+          </div>
+  
+          <!-- CUSTOMER INFO -->
+          <div class="form-section">
+            <label>First Name</label>
+            <input type="text" id="firstName"  />
+  
+            <label>Last Name</label>
+            <input type="text" id="lastName"  />
+  
+            <label>Email</label>
+            <input type="email" id="email"  />
+          </div>
+  
+          <!-- ORDER OPTIONS -->
+          <div class="form-section">
+            <label>Shirt Size</label>
+            <select id="size" >
+              <option value="">Select a size</option>
+              <option value="S">Small (–$1.00)</option>
+              <option value="M">Medium (Standard)</option>
+              <option value="L">Large (Standard)</option>
+              <option value="XL">XL (+$2.00)</option>
+            </select>
+  
+            <label>Quantity</label>
+            <input type="number" id="quantity" min="1" value="1"  />
+  
+            <label>Preferred Print Date</label>
+            <input type="date" id="printDate" />
+  
+            <label>Shirt Color</label>
+            <input type="color" id="shirtColor" value="#ffffff" />
+          </div>
+  
+          <!-- PRINT STYLE (RADIO BUTTONS) -->
+          <div class="form-section">
+            <h3>Print Style</h3>
+            <label
+              ><input type="radio" name="printStyle" value="5" /> Basic Print (+$5
+              per shirt)</label
+            ><br />
+            <label
+              ><input type="radio" name="printStyle" value="10" /> Premium Print
+              (+$10 per shirt)</label
+            ><br />
+          </div>
+  
+          <!-- ADD-ONS (CHECKBOXES) -->
+          <div class="form-section">
+            <h3>Add-Ons</h3>
+            <label
+              ><input type="checkbox" name="addon" value="4" /> Sleeve Print
+              (+$4)</label
+            ><br />
+            <label
+              ><input type="checkbox" name="addon" value="6" /> Back Print
+              (+$6)</label
+            ><br />
+            <label
+              ><input type="checkbox" name="addon" value="8" /> Metallic Ink
+              (+$8)</label
+            ><br />
+          </div>
+  
+          <!-- ACTION BUTTONS -->
+          <div style="margin-top: 20px; display: flex; gap: 15px">
+            <button type="submit" class="buy-btn">Submit Order</button>
+            <button
+              type="reset"
+              id="resetForm"
+              class="buy-btn"
+              style="background: #555"
+            >
+              Reset
+            </button>
+          </div>
+        </form>
+  
+        <!-- SUMMARY BOX (JS uses this) -->
+        <div
+          id="summary"
+          class="hidden"
+          style="
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 10px;
+            background: #f0f4ff;
+            box-shadow: var(--card-shadow);
+          "
+        >
+          <h2>Order Summary</h2>
+          <div id="summaryContent"></div>
+          <h3 style="margin-top: 15px">
+            Total: <span id="totalAmount">$0.00</span>
+          </h3>
+        </div>
+      </section>
+
+  
+
+      <p>&copy; 2025 Outerwear Supply – All Rights Reserved</p>
+    </footer>
+  </body>
+</html>
