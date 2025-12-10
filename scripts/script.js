@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const BASE_SHIRT_PRICE = 15.0;
   const TAX_RATE = 0.0825;
-
+//this is the constant
   const form = document.getElementById("orderForm");
   const summary = document.getElementById("summary");
   const summaryContent = document.getElementById("summaryContent");
@@ -13,16 +13,20 @@ document.addEventListener("DOMContentLoaded", function () {
   if (yearSpan) {
     yearSpan.textContent = new Date().getFullYear();
   }
-
+//converts numbers to currency values
   function formatCurrency(amount) {
+    //another boolean
     var negative = false;
 
     if (amount < 0) {
+      // this a boolean
       negative = true;
       amount = amount * -1;
     }
 
-    var str = String(amount);
+    //this is the let
+    let str = String(amount);
+    // split the string method
     var parts = str.split(".");
 
 
@@ -34,13 +38,13 @@ document.addEventListener("DOMContentLoaded", function () {
     if (parts.length > 1) {
       cents = parts[1];
     }
-
+// slice string method
     cents = cents.padEnd(2, "0").slice(0, 2);
 
   
     var result = "";
     var count = 0;
-
+// this is the loop
     for (var i = dollars.length - 1; i >= 0; i--) {
       result = dollars[i] + result;
       count++;
@@ -56,17 +60,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
     return "$" + result + "." + cents;
   }
+//this does all the math
 
   function calculateTotal(orderDetails) {
     var subtotal = 0;
 
     subtotal += BASE_SHIRT_PRICE * orderDetails.quantity;
     subtotal += (orderDetails.printStylePrice * 1) * orderDetails.quantity;
-
+// this is the loop
     for (var i = 0; i < orderDetails.addons.length; i++) {
       subtotal += orderDetails.addons[i] * 1;
     }
+// changes price depening on the size
 
+// this is an if else
     if (orderDetails.size === "S") {
       subtotal -= 1;
     } else if (orderDetails.size === "XL") {
@@ -75,7 +82,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     var tax = subtotal * TAX_RATE;
     var total = subtotal + tax;
-
+// third digit  decimal
     var totalStr = String(total).split(".");
     var whole = totalStr[0];
     var decimals = totalStr[1] ? totalStr[1].padEnd(3, "0") : "000";
@@ -100,9 +107,11 @@ document.addEventListener("DOMContentLoaded", function () {
       total: finalTotal
     };
   }
+
+  //this is an event listener
   form.addEventListener("submit", function (e) {
     e.preventDefault();
-
+// makes sure you have options to select
     try {
       var firstName = document.getElementById("firstName").value.trim();
       var lastName = document.getElementById("lastName").value.trim();
@@ -135,6 +144,8 @@ document.addEventListener("DOMContentLoaded", function () {
       var printStyleElements = document.getElementsByName("printStyle");
       var printStylePrice = null;
 
+
+      //this is an array
       for (var i = 0; i < printStyleElements.length; i++) {
         if (printStyleElements[i].checked) {
           printStylePrice = printStyleElements[i].value;
@@ -154,7 +165,7 @@ document.addEventListener("DOMContentLoaded", function () {
           addons.push(addonElements[j].value);
         }
       }
-
+// this  keeps all my varables
       var orderDetails = {
         firstName: firstName,
         lastName: lastName,
@@ -177,7 +188,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         addonDisplay = temp.join(", ");
       }
-
+// this is the part where you make the slection of what you want
       var html =
         "<p><strong>Customer:</strong> " + firstName + " " + lastName + "</p>" +
         "<p><strong>Email:</strong> " + email + "</p>" +
@@ -194,14 +205,14 @@ document.addEventListener("DOMContentLoaded", function () {
       summaryContent.innerHTML = html;
       totalAmount.textContent = formatCurrency(totals.total);
       summary.classList.remove("hidden");
-
+// makes sure nothing goews wrong
     } catch (err) {
       console.error(err);
       alert("Something went wrong. Try again.");
     }
   });
 
-
+// resets the options
   if (resetButton) {
     resetButton.addEventListener("click", function () {
       summary.classList.add("hidden");
