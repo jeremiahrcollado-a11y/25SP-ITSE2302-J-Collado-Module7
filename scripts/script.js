@@ -1,4 +1,5 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", function () {
+
   const BASE_SHIRT_PRICE = 15.0;
   const TAX_RATE = 0.0825;
 
@@ -9,74 +10,114 @@ document.addEventListener("DOMContentLoaded", () => {
   const yearSpan = document.getElementById("year");
   const resetBtn = document.getElementById("resetForm");
 
-  if (yearSpan) yearSpan.textContent = new Date().getFullYear();
-
-  // -------------------------------------------------
-  // Custom currency formatter (NO toLocaleString used)
-  // -------------------------------------------------
-  function formatCurrency(amount) {
-    let negative = amount < 0 ? "-" : "";
-    amount = Math.abs(amount);
-
-    let dollars = Math.floor(amount);
-    let cents = Math.round((amount - dollars) * 100);
-    if (cents < 10) cents = "0" + cents;
-
-    // Add thousands separators manually
-    let dollarsStr = String(dollars).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-
-    return `${negative}$${dollarsStr}.${cents}`;
+  if (yearSpan) {
+    yearSpan.textContent = new Date().getFullYear();
   }
 
-  // -------------------------------------------------
-  // Calculate totals (no Number() — uses unary +)
-  // -------------------------------------------------
+  function formatCurrency(amount) {
+    var negative = false;
+
+    if (amount < 0) {
+      negative = true;
+      amount = amount * -1;
+    }
+
+    var str = String(amount);
+    var parts = str.split(".");
+
+
+    var dollars = parts[0];
+
+
+    var cents = "0";
+
+    if (parts.length > 1) {
+      cents = parts[1];
+    }
+
+    cents = cents.padEnd(2, "0").slice(0, 2);
+
+  
+    var result = "";
+    var count = 0;
+
+    for (var i = dollars.length - 1; i >= 0; i--) {
+      result = dollars[i] + result;
+      count++;
+      if (count === 3 && i !== 0) {
+        result = "," + result;
+        count = 0;
+      }
+    }
+
+    if (negative) {
+      return "-$" + result + "." + cents;
+    }
+
+    return "$" + result + "." + cents;
+  }
+
   function calculateTotal(orderDetails) {
-    let subtotal = 0;
+    var subtotal = 0;
 
     subtotal += BASE_SHIRT_PRICE * orderDetails.quantity;
-    subtotal += +orderDetails.printStylePrice * orderDetails.quantity;
+    subtotal += (orderDetails.printStylePrice * 1) * orderDetails.quantity;
 
-    for (let i = 0; i < orderDetails.addons.length; i++) {
-      subtotal += +orderDetails.addons[i];
+    for (var i = 0; i < orderDetails.addons.length; i++) {
+      subtotal += orderDetails.addons[i] * 1;
     }
 
-    switch (orderDetails.size) {
-      case "S":
-        subtotal -= 1.0;
-        break;
-      case "XL":
-        subtotal += 2.0;
-        break;
+    if (orderDetails.size === "S") {
+      subtotal -= 1;
+    } else if (orderDetails.size === "XL") {
+      subtotal += 2;
     }
 
-    let tax = subtotal * TAX_RATE;
-    let total = subtotal + tax;
+    var tax = subtotal * TAX_RATE;
+    var total = subtotal + tax;
 
-    total = Math.round(total * 100) / 100;
-    return { subtotal, tax, total };
+    var totalStr = String(total).split(".");
+    var whole = totalStr[0];
+    var decimals = totalStr[1] ? totalStr[1].padEnd(3, "0") : "000";
+
+    // Third digit decides rounding
+    var third = Number(decimals[2]);
+    var centsTwo = Number(decimals.slice(0, 2));
+
+    if (third >= 5) {
+      centsTwo += 1;
+      if (centsTwo === 100) {
+        whole = String(Number(whole) + 1);
+        centsTwo = 0;
+      }
+    }
+
+    var finalTotal = Number(whole + "." + String(centsTwo).padStart(2, "0"));
+
+    return {
+      subtotal: subtotal,
+      tax: tax,
+      total: finalTotal
+    };
   }
-
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", function (e) {
     e.preventDefault();
 
     try {
-      let firstName = document.getElementById("firstName").value.trim();
-      let lastName = document.getElementById("lastName").value.trim();
-      let email = document.getElementById("email").value.trim();
-      let size = document.getElementById("size").value;
-
-      let quantity = +document.getElementById("quantity").value;
-
-      let color = document.getElementById("shirtColor").value;
-      let date = document.getElementById("printDate").value;
+      var firstName = document.getElementById("firstName").value.trim();
+      var lastName = document.getElementById("lastName").value.trim();
+      var email = document.getElementById("email").value.trim();
+      var size = document.getElementById("size").value;
+      var quantity = document.getElementById("quantity").value * 1;
+      var color = document.getElementById("shirtColor").value;
+      var date = document.getElementById("printDate").value;
 
       if (firstName === "" || lastName === "") {
         alert("Please enter both first and last name.");
         return;
       }
 
-      if (!email.includes("@")) {
+      if (email.indexOf("@") === -1) {
         alert("Please enter a valid email address.");
         return;
       }
@@ -91,10 +132,10 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      let printStyleElements = document.getElementsByName("printStyle");
-      let printStylePrice = null;
+      var printStyleElements = document.getElementsByName("printStyle");
+      var printStylePrice = null;
 
-      for (let i = 0; i < printStyleElements.length; i++) {
+      for (var i = 0; i < printStyleElements.length; i++) {
         if (printStyleElements[i].checked) {
           printStylePrice = printStyleElements[i].value;
         }
@@ -105,62 +146,68 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      let addonElements = document.getElementsByName("addon");
-      let addons = [];
+      var addonElements = document.getElementsByName("addon");
+      var addons = [];
 
-      for (let i = 0; i < addonElements.length; i++) {
-        if (addonElements[i].checked) {
-          addons.push(addonElements[i].value);
+      for (var j = 0; j < addonElements.length; j++) {
+        if (addonElements[j].checked) {
+          addons.push(addonElements[j].value);
         }
       }
 
-      let orderDetails = {
-        firstName,
-        lastName,
-        email,
-        size,
-        quantity,
-        printStylePrice,
-        addons,
-        color,
-        date,
+      var orderDetails = {
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        size: size,
+        quantity: quantity,
+        printStylePrice: printStylePrice,
+        addons: addons,
+        color: color,
+        date: date
       };
 
-      let totals = calculateTotal(orderDetails);
+      var totals = calculateTotal(orderDetails);
 
-      let html = `
-        <p><strong>Customer:</strong> ${orderDetails.firstName} ${orderDetails.lastName}</p>
-        <p><strong>Email:</strong> ${orderDetails.email}</p>
-        <p><strong>Size:</strong> ${orderDetails.size}</p>
-        <p><strong>Quantity:</strong> ${orderDetails.quantity}</p>
-        <p><strong>Print Style:</strong> ${formatCurrency(+orderDetails.printStylePrice)}</p>
-        <p><strong>Add-ons:</strong> ${
-          addons.length
-            ? addons.map((a) => formatCurrency(+a)).join(", ")
-            : "None"
-        }</p>
-        <p><strong>Color (Hex):</strong> ${orderDetails.color}</p>
-        <p><strong>Date:</strong> ${orderDetails.date || "No preference"}</p>
-        <hr>
-        <p><strong>Subtotal:</strong> ${formatCurrency(totals.subtotal)}</p>
-        <p><strong>Tax:</strong> ${formatCurrency(totals.tax)}</p>
-      `;
+      var addonDisplay = "None";
+      if (addons.length > 0) {
+        var temp = [];
+        for (var k = 0; k < addons.length; k++) {
+          temp.push(formatCurrency(addons[k]));
+        }
+        addonDisplay = temp.join(", ");
+      }
+
+      var html =
+        "<p><strong>Customer:</strong> " + firstName + " " + lastName + "</p>" +
+        "<p><strong>Email:</strong> " + email + "</p>" +
+        "<p><strong>Size:</strong> " + size + "</p>" +
+        "<p><strong>Quantity:</strong> " + quantity + "</p>" +
+        "<p><strong>Print Style:</strong> " + formatCurrency(printStylePrice) + "</p>" +
+        "<p><strong>Add-ons:</strong> " + addonDisplay + "</p>" +
+        "<p><strong>Color (Hex):</strong> " + color + "</p>" +
+        "<p><strong>Date:</strong> " + (date || "No preference") + "</p>" +
+        "<hr>" +
+        "<p><strong>Subtotal:</strong> " + formatCurrency(totals.subtotal) + "</p>" +
+        "<p><strong>Tax:</strong> " + formatCurrency(totals.tax) + "</p>";
 
       summaryContent.innerHTML = html;
       totalAmount.textContent = formatCurrency(totals.total);
-
       summary.classList.remove("hidden");
+
     } catch (err) {
       console.error(err);
-      alert("An unexpected error occurred. Please try again.");
+      alert("Something went wrong. Try again.");
     }
   });
 
-  if (resetBtn) {
-    resetBtn.addEventListener("click", () => {
+
+  if (resetButton) {
+    resetButton.addEventListener("click", function () {
       summary.classList.add("hidden");
       summaryContent.innerHTML = "";
       totalAmount.textContent = formatCurrency(0);
     });
   }
+
 });
